@@ -55,7 +55,7 @@ void task_abort(Task *task)
 
 void task_sync(Task *task)
 {
-    task->exec.retval = task->exec.function(task->exec.argument);
+   task->exec.retval = task->exec.function(task->exec.argument);
 }
 void task_async(Task *task)
 {
