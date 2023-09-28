@@ -1,6 +1,8 @@
 #include <private.h>
 #include <stdlib.h>
 
+#include <thread_debug.h>
+
 ThreadPool* _ThreadPool()
 {
     ThreadPool *tp = calloc(1, sizeof *tp);
@@ -11,6 +13,7 @@ ThreadPool* _ThreadPool()
     tp->n_threads = DEFAULT_N_THREADS;
     tp->threads = calloc(DEFAULT_N_THREADS, sizeof *tp->threads);
     if (NULL == tp->threads) {
+        error("out of memory");
         free(tp);
         return NULL;
     }
@@ -22,10 +25,10 @@ ThreadPool* _ThreadPool()
         return NULL;
     }
 
-    printf("threadpool_create\n");
+    debug("threadpool_create\n");
 
     for (size_t i = 0; i < tp->n_threads; i++) {
-        printf("Creating new Thread %zu\n", i);
+        debug("Creating new Thread %zu\n", i);
         tp->threads[i] = _Thread();
         tp->threads[i]->queue = tp->queue;
     }

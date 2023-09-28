@@ -8,6 +8,7 @@
 
 _Atomic static int thread_id = 0;
 __thread Thread *g_thread = NULL;
+__thread FILE *g_thread_log = NULL;
 
 void nsleep(size_t seconds, size_t milli)
 {
@@ -49,4 +50,16 @@ void thread_destroy(Thread *thread)
 void thread_append(Thread *thread, Task *task)
 {
     taskqueue_append(thread->queue, task);
+}
+
+void thread_pause(Thread *thread)
+{
+    if (thread)
+        pthread_kill(thread->thread_id, SIGUSR1);
+}
+
+void thread_resume(Thread *thread)
+{
+    if (thread)
+        thread->status = ThreadResumed;
 }

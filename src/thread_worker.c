@@ -33,7 +33,7 @@ int thread_worker_enable_pause(void)
     act_pause.sa_handler = thread_worker_pause_action_handler;
 
     if(sigaction(SIGUSR1, &act_pause, NULL) == -1) {
-        debug_error("failed to register sigaction handler for pausing the thread");
+        error("failed to register sigaction handler for pausing the thread");
         //thread_on_hold_available = 0;
         return -1;
     }
@@ -48,12 +48,14 @@ ThreadWorker thread_worker(void *arg) {
     Thread *thread = arg;
     g_thread = thread;
 
-    printf("ThreadWorker init\n");
+    thread_worker_enable_pause();
 
-    printf("Waiting for queue\n");
+    debug("ThreadWorker init");
+
+    debug("Waiting for queue");
     while(thread->queue == NULL) {
         nsleep(0, 100000);
-        printf("queue is null\n");
+        debug("queue is null");
     }
 
     for (;;) {
@@ -63,7 +65,7 @@ ThreadWorker thread_worker(void *arg) {
         }
 
         thread->status = ThreadIdle;
-        printf("Thread %d: Waiting for tasks\n", thread->local_id);
+        debug("Thread %d: Waiting for tasks\n", thread->local_id);
         while(thread->queue->begin == NULL && thread->queue->count == 0) {
             nsleep(0, 1000);
         }

@@ -19,7 +19,7 @@
 #ifdef DEBUG
 pthread_mutex_t debug_lock = PTHREAD_MUTEX_INITIALIZER;
 
-extern __thread FILE *thread_log;
+extern __thread FILE *g_thread_log;
 
 extern const char* thread_strerror(int err);
 
@@ -35,7 +35,7 @@ extern const char* thread_strerror(int err);
 
 void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
 {
-    FILE *fp = thread_log == NULL ? stdout : thread_log;
+    FILE *fp = g_thread_log == NULL ? stdout : g_thread_log;
     const char name[16] = { 0 };
     pthread_getname_np(threadid, name, sizeof name);
 
@@ -43,7 +43,7 @@ void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
 
-    fprintf(fp, "DEBUG: %16s[%ld] %s(): ", name, threadid, function);
+    fprintf(fp, "DEBUG: %s[%ld] %16s(): ", name, threadid, function);
     vfprintf(fp, fmt, args);
     fprintf(fp, "\n");
     fflush(fp);
@@ -53,9 +53,9 @@ void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
 }
 
 
-void xdebug_error(pthread_t threadid, const char *function, const char *filename, int line, const char *fmt, ...)
+void xerror(pthread_t threadid, const char *function, const char *filename, int line, const char *fmt, ...)
 {
-    FILE *fp = thread_log == NULL ? stderr : thread_log;
+    FILE *fp = g_thread_log == NULL ? stderr : g_thread_log;
     const char name[16] = { 0 };
     pthread_getname_np(threadid, name, sizeof name);
 

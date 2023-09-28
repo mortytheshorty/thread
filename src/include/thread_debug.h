@@ -33,8 +33,8 @@
  /* same as for 'xdebug()' but for error and also prints errno string if
     errno is set.
  */
- void xdebug_error(pthread_t threadid, const char *function, const char *filename, int line, const char *fmt, ...);
- #define debug_error(fmt, ...) xdebug_error(pthread_self(), __func__, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+ void xerror(pthread_t threadid, const char *function, const char *filename, int line, const char *fmt, ...);
+ #define error(fmt, ...) xerror(pthread_self(), __func__, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
 
 /*  void xfree(void *ptr, const char *file, int line);
  #define free(x) xfree((x), __FILE__, __LINE__)

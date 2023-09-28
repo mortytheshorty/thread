@@ -40,6 +40,8 @@ void task_destroy(Task *task);
 void task_set(Task *task, void* (*function)(void*), void *arg);
 void task_execute(Task *task, Thread *thread);
 void task_abort(Task *task);
+void task_pause(Task *task);
+void task_resume(Task *task);
 void task_sync(Task *task);
 void task_async(Task *task);
 

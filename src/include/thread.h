@@ -33,6 +33,7 @@ ThreadWorker thread_worker(void* arg);
 Thread* _Thread();
 void thread_destroy(Thread *thread);
 void thread_append(Thread *thread, Task *task);
-
+void thread_pause(Thread *thread);
+void thread_resume(Thread *thread);
 
 #endif

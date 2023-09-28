@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include <private.h>
+#include <thread_debug.h>
 
 static int task_id = 0;
 
@@ -43,14 +44,24 @@ void task_execute(Task *task, Thread *thread)
 void task_abort(Task *task)
 {
     if (task->master != NULL) {
-        printf("master\n");
+        debug("master: %p\n", task->master);
         if (task->master->tcb != NULL) {
-            printf("callback: %p\n", task->master->tcb);
+            debug("callback: %p\n", task->master->tcb);
             task->master->tcb();
             task->status = TaskStopped;
             printf("aborting\n");
         }
     }
+}
+
+void task_pause(Task *task)
+{
+    thread_pause(task->master);
+}
+
+void task_resume(Task *task)
+{
+    thread_resume(task->master);
 }
 
 void task_sync(Task *task)
