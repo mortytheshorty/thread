@@ -2,6 +2,7 @@
 #include <time.h>
 
 #include "include/thread.h"
+#include "include/thread_debug.h"
 
 #define THREAD_SLEEP_TIME 250000000
 
