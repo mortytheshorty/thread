@@ -11,6 +11,8 @@
 #include <errno.h>
 #include <pthread.h>
 
+#include <thread.h>
+
 #define DEBUG
 
 /*********************************************************************************************************/
@@ -19,7 +21,8 @@
 #ifdef DEBUG
 pthread_mutex_t debug_lock = PTHREAD_MUTEX_INITIALIZER;
 
-extern __thread FILE *g_thread_log;
+extern __thread FILE *g_thread_log = NULL;
+extern __thread Thread *g_thread = NULL;
 
 extern const char* thread_strerror(int err);
 
@@ -43,7 +46,7 @@ void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
 
-    fprintf(fp, "DEBUG: %s[%ld] %16s(): ", name, threadid, function);
+    fprintf(fp, "DEBUG: %s[%ld] %16s(): ", name, g_thread == NULL ? threadid : g_thread->local_id, function);
     vfprintf(fp, fmt, args);
     fprintf(fp, "\n");
     fflush(fp);
@@ -64,7 +67,7 @@ void xerror(pthread_t threadid, const char *function, const char *filename, int 
     va_list args;
     va_start(args, fmt);
 
-    fprintf(fp, "ERROR: %s[%ld] %s(): ", name, threadid, function);
+    fprintf(fp, "ERROR: %s[%ld] %s(): ", name, g_thread == NULL ? threadid : g_thread->local_id, function);
     vfprintf(fp, fmt, args);
     if(err) {
         fprintf(fp, " (%s)", strerror(errno));

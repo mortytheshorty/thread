@@ -3,6 +3,7 @@
 #include <pthread.h>
 
 #include "include/thread.h"
+#include "include/threadpool.h"
 #include "include/thread_debug.h"
 
 #define THREAD_SLEEP_TIME 250000000
@@ -39,7 +40,7 @@ int thread_worker_enable_pause(void)
         return -1;
     }
 
-    debug("registering sigaction handler for puasing the thread");
+    debug("registering sigaction handler for pausing the thread");
 
     return 0;
 }
@@ -47,6 +48,9 @@ int thread_worker_enable_pause(void)
 ThreadWorker thread_worker(void *arg) {
 
     Thread *thread = arg;
+    ThreadPool *tp = NULL;
+    taskqueue_t *queue = NULL;
+
     g_thread = thread;
 
     thread_worker_enable_pause();
@@ -61,20 +65,30 @@ ThreadWorker thread_worker(void *arg) {
 
     for (;;) {
 
+        if (thread->tp != NULL) {
+            queue = thread->tp->queue;
+        } else {
+            queue = thread->queue;
+        }
+        
+
         if (thread->status == ThreadShutdown) {
             break;
         }
 
         thread->status = ThreadIdle;
         debug("Thread %d: Waiting for tasks\n", thread->local_id);
-        while(thread->queue->begin == NULL && thread->queue->count == 0) {
+        while(queue->begin == NULL && queue->count == 0) {
             nsleep(0, 1000);
         }
 
         thread->current_task = taskqueue_remove(thread->queue, thread->queue->begin);
 
         thread->status = ThreadRunning;
+        debug("threadpool at: %p", tp);
+        //tp->n_running++;
         task_execute(thread->current_task, thread);
+        //tp->n_running--;
     }
 
     return NULL;

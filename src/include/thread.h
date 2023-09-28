@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 #include "taskqueue.h"
+#include "threadpool.h"
 
 typedef void* (*RETURN_CALLBACK)();
 
@@ -20,6 +21,7 @@ typedef struct Thread {
     _Atomic const char *name;
     _Atomic ThreadStatus status;
     taskqueue_t *queue;
+    ThreadPool *tp;
     Task *current_task;
     _Atomic RETURN_CALLBACK tcb;
 } Thread;

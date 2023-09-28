@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <private.h>
+#include <signal.h>
 
 _Atomic static int thread_id = 0;
 __thread Thread *g_thread = NULL;

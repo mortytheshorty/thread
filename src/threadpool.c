@@ -31,6 +31,7 @@ ThreadPool* _ThreadPool()
         debug("Creating new Thread %zu\n", i);
         tp->threads[i] = _Thread();
         tp->threads[i]->queue = tp->queue;
+        tp->threads[i]->tp = tp;
     }
 
     tp->n_threads = DEFAULT_N_THREADS;

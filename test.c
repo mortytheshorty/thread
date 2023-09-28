@@ -40,9 +40,17 @@ int main(void)
     sleep(5);
 
     //task_abort(task2);
+    task_pause(task);
 
     printf("Main: Waiting\n");
-    sleep(25);
+    sleep(2);
+
+    task_resume(task);
+
+    printf("ThreadPool->running: %d\n", tp->n_running);
+    printf("ThreadPool->idle: %d\n", tp->n_threads - tp->n_running);
+
+    sleep(10);
 
 
 
