@@ -21,8 +21,8 @@
 #ifdef DEBUG
 pthread_mutex_t debug_lock = PTHREAD_MUTEX_INITIALIZER;
 
-extern __thread FILE *g_thread_log = NULL;
-extern __thread Thread *g_thread = NULL;
+extern __thread FILE *g_thread_log;
+extern __thread Thread *g_thread;
 
 extern const char* thread_strerror(int err);
 
