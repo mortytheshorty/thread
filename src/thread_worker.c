@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <time.h>
+#include <pthread.h>
 
 #include "include/thread.h"
 #include "include/thread_debug.h"
