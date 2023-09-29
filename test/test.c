@@ -3,21 +3,18 @@
 #include <task.h>
 #include <thread.h>
 #include <threadpool.h>
-#include <thread_debug.h>
+//#include <thread_debug.h>
 
 void* func(void *arg) {
     RETURN_ADDRESS;
     int i = 10;
     while(i--) {
-        printf("%s\n", arg);
+        printf("%s\n", (char *) arg);
         sleep(1);
     }
 
     return NULL;
 }
-
-
-typedef int (*test)();
 
 int main(void)
 {
@@ -28,12 +25,12 @@ int main(void)
     task2->name = (_Atomic const char *) "Task 2";
 
     if (!task) {
-        error("task null\n");
+        perror("task null\n");
         return 0;
     }
 
     if (!task2) {
-        error("task2 null\n");
+        perror("task2 null\n");
         return 0;
     }
     ThreadPool *tp = _ThreadPool();
@@ -62,6 +59,14 @@ int main(void)
 
     task_destroy(task);
     task_destroy(task2);
+
+    printf("ThreadPool->running: %ld\n", tp->n_running);
+    printf("ThreadPool->idle: %ld\n", tp->n_threads - tp->n_running);
+
+    sleep(1);
+
+    printf("ThreadPool->running: %ld\n", tp->n_running);
+    printf("ThreadPool->idle: %ld\n", tp->n_threads - tp->n_running);
 
     threadpool_destroy(tp);
     return 0;

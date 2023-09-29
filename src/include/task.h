@@ -19,14 +19,14 @@ typedef enum {
     TaskCancled,
 } TaskStatus;
 
-typedef struct execution {
-    _Atomic uint8_t* (*function)(void*);
-    _Atomic uint8_t* argument;
-    _Atomic uint8_t* retval;
-} execution_t;
+typedef void* (*task_func_t)(void*);
+typedef void* argument_t;
+typedef void* result_t;
 
 typedef struct Task {
-    execution_t exec;
+    _Atomic task_func_t function;
+    _Atomic argument_t argument;
+    _Atomic result_t retval;
     Thread *master;
     _Atomic int id;
     _Atomic const char *name;

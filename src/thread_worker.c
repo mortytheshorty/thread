@@ -2,9 +2,8 @@
 #include <time.h>
 #include <pthread.h>
 
-#include "include/thread.h"
-#include "include/threadpool.h"
-#include "include/thread_debug.h"
+#include <private.h>
+#include <thread_debug.h>
 
 #define THREAD_SLEEP_TIME 250000000
 
@@ -89,13 +88,20 @@ void* thread_worker(void *arg) {
 
         // debug("queue->begin: %p", queue->begin);
         // debug("queue->count: %p", queue->count);
-        thread->current_task = taskqueue_remove(queue, queue->begin);
+        thread->current_task = taskqueue_remove(queue, (Task *) queue->begin);
 
         thread->status = ThreadRunning;
         debug("executing task '%s'", thread->current_task->name);
-        tp == NULL ?  NULL : tp->n_running++;
+
+        if(tp != NULL) {
+            tp->n_running++;
+        }
+        
         task_execute(thread->current_task, thread);
-        tp == NULL ?  NULL : tp->n_running--;
+
+        if(tp != NULL) {
+            tp->n_running--;
+        }
     }
 
     return NULL;

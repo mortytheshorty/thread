@@ -6,4 +6,6 @@
 #include <thread.h>
 #include <threadpool.h>
 
+void nsleep(size_t seconds, size_t milli);
+
 #endif

@@ -6,15 +6,15 @@
 
 _Atomic static int task_id = 0;
 
-Task *_Task(void* (*function)(void*), void *arg)
+Task *_Task(task_func_t function, void *arg)
 {
     Task *task = calloc(1, sizeof *task);
     if (task == NULL) {
         return NULL;
     }
 
-    task->exec.function = function;
-    task->exec.argument = arg;
+    task->function = function;
+    task->argument = arg;
     task->status = TaskCreated;
     task->id = task_id++;
     
@@ -28,11 +28,11 @@ void task_destroy(Task *task)
     free(task);
 }
 
-void task_set(Task *task, void* (*function)(void*), void *arg)
+void task_set(Task *task, task_func_t function, void *arg)
 {
-    task->exec.function = (_Atomic uint8_t *) function;
-    task->exec.argument = (_Atomic uint8_t *) arg;
-    task->exec.retval = (_Atomic uint8_t *) NULL;
+    task->function = function;
+    task->argument = arg;
+    task->retval = NULL;
 }
 
 void task_execute(Task *task, Thread *thread)
@@ -40,7 +40,7 @@ void task_execute(Task *task, Thread *thread)
     task->master = thread;
     thread->current_task = task;
     task->status = TaskRunning;
-    task->exec.retval = task->exec.function(task->exec.argument);
+    task->retval = task->function(task->argument);
 }
 
 void task_abort(Task *task)
@@ -68,7 +68,7 @@ void task_resume(Task *task)
 
 void task_sync(Task *task)
 {
-   task->exec.retval = task->exec.function(task->exec.argument);
+   task->retval = task->function(task->argument);
 }
 void task_async(Task *task)
 {
