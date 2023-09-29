@@ -13,12 +13,17 @@ void thread_worker_pause_action_handler(int sig_id)
     debug("thread pause action handler called");
     (void)sig_id;
 
+    if (g_thread->status == ThreadShutdown) {
+        g_thread->tcb();
+    }
+
     struct timespec timespec = { 0 };
     timespec.tv_nsec = THREAD_SLEEP_TIME;
 
     ThreadStatus old_state = g_thread->status;
     g_thread->status = ThreadPaused;
     
+
     while( g_thread->status != ThreadResumed ) {
         debug("still sleeping");
         nanosleep(&timespec, NULL);
@@ -45,7 +50,7 @@ int thread_worker_enable_pause(void)
     return 0;
 }
 
-ThreadWorker thread_worker(void *arg) {
+void* thread_worker(void *arg) {
 
     Thread *thread = arg;
     ThreadPool *tp = NULL;
@@ -63,32 +68,34 @@ ThreadWorker thread_worker(void *arg) {
         debug("queue is null");
     }
 
-    for (;;) {
+    for (;thread->queue;) {
 
         if (thread->tp != NULL) {
+            tp = thread->tp;
             queue = thread->tp->queue;
         } else {
             queue = thread->queue;
         }
         
-
-        if (thread->status == ThreadShutdown) {
-            break;
-        }
-
         thread->status = ThreadIdle;
         debug("Thread %d: Waiting for tasks\n", thread->local_id);
+
         while(queue->begin == NULL && queue->count == 0) {
+            if(thread->queue == NULL) {
+                return NULL;
+            }
             nsleep(0, 1000);
         }
 
-        thread->current_task = taskqueue_remove(thread->queue, thread->queue->begin);
+        // debug("queue->begin: %p", queue->begin);
+        // debug("queue->count: %p", queue->count);
+        thread->current_task = taskqueue_remove(queue, queue->begin);
 
         thread->status = ThreadRunning;
-        debug("threadpool at: %p", tp);
-        //tp->n_running++;
+        debug("executing task '%s'", thread->current_task->name);
+        tp == NULL ?  NULL : tp->n_running++;
         task_execute(thread->current_task, thread);
-        //tp->n_running--;
+        tp == NULL ?  NULL : tp->n_running--;
     }
 
     return NULL;

@@ -30,12 +30,25 @@ ThreadPool* _ThreadPool()
     for (size_t i = 0; i < tp->n_threads; i++) {
         debug("Creating new Thread %zu\n", i);
         tp->threads[i] = _Thread();
-        tp->threads[i]->queue = tp->queue;
         tp->threads[i]->tp = tp;
+        tp->threads[i]->queue = tp->queue;
     }
 
     tp->n_threads = DEFAULT_N_THREADS;
     return tp;
+}
+
+void threadpool_destroy(ThreadPool *tp)
+{
+    for (size_t i = 0; i < tp->n_threads; i++) {
+        tp->threads[i]->queue = NULL;
+        pthread_join(tp->threads[i]->thread_id, NULL);
+        debug("waiting on thread to finish");
+        free(tp->threads[i]);
+    }
+
+    free(tp->threads);
+    free(tp);
 }
 
 void threadpool_extend(ThreadPool *tp, Thread *thread)

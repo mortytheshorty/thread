@@ -7,9 +7,11 @@
 #include <private.h>
 #include <signal.h>
 
-_Atomic static int thread_id = 0;
+_Atomic static int thread_id = 1;
 __thread Thread *g_thread = NULL;
 __thread FILE *g_thread_log = NULL;
+
+void* thread_worker(void *arg);
 
 void nsleep(size_t seconds, size_t milli)
 {

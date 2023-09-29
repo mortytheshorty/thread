@@ -20,7 +20,7 @@ typedef enum {
 } TaskStatus;
 
 typedef struct execution {
-    uint8_t* (*function)(void*);
+    _Atomic uint8_t* (*function)(void*);
     _Atomic uint8_t* argument;
     _Atomic uint8_t* retval;
 } execution_t;
@@ -28,6 +28,7 @@ typedef struct execution {
 typedef struct Task {
     execution_t exec;
     Thread *master;
+    _Atomic const char *name;
     TaskStatus status;
     struct Task *prev;
     struct Task *next;
@@ -38,6 +39,7 @@ void task_set_rcb();
 Task *_Task(void* (*function)(void*), void *arg);
 void task_destroy(Task *task);
 void task_set(Task *task, void* (*function)(void*), void *arg);
+void task_name(Task *task, const char *name);
 void task_execute(Task *task, Thread *thread);
 void task_abort(Task *task);
 void task_pause(Task *task);

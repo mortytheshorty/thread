@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "src/include/task.h"
-#include "src/include/thread.h"
-#include "src/include/threadpool.h"
-#include "src/include/thread_debug.h"
+#include <task.h>
+#include <thread.h>
+#include <threadpool.h>
+#include <thread_debug.h>
 
 void* func(void *arg) {
     RETURN_ADDRESS;
@@ -23,6 +23,10 @@ int main(void)
 {
     Task *task = _Task(func, "Task: 1");
     Task *task2 = _Task(func, "Task: 2");
+
+    task->name = "Task 1";
+    task2->name = "Task 2";
+
     if (!task) {
         error("task null\n");
         return 0;
@@ -33,6 +37,8 @@ int main(void)
         return 0;
     }
     ThreadPool *tp = _ThreadPool();
+
+
 
     threadpool_append(tp, task);
     threadpool_append(tp, task2);
@@ -56,5 +62,7 @@ int main(void)
 
     task_destroy(task);
     task_destroy(task2);
+
+    threadpool_destroy(tp);
     return 0;
 }

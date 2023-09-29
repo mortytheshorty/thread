@@ -46,7 +46,7 @@ void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
 
-    fprintf(fp, "DEBUG: %s[%ld] %16s(): ", name, g_thread == NULL ? threadid : g_thread->local_id, function);
+    fprintf(fp, "DEBUG: %s[%ld] %32s(): ", name, g_thread == NULL ? 0UL : g_thread->local_id, function);
     vfprintf(fp, fmt, args);
     fprintf(fp, "\n");
     fflush(fp);
@@ -67,7 +67,7 @@ void xerror(pthread_t threadid, const char *function, const char *filename, int 
     va_list args;
     va_start(args, fmt);
 
-    fprintf(fp, "ERROR: %s[%ld] %s(): ", name, g_thread == NULL ? threadid : g_thread->local_id, function);
+    fprintf(fp, "ERROR: %s[%ld] %s(): ", name, g_thread == NULL ? 0UL : g_thread->local_id, function);
     vfprintf(fp, fmt, args);
     if(err) {
         fprintf(fp, " (%s)", strerror(errno));

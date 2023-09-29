@@ -30,7 +30,7 @@ typedef struct Thread {
 typedef void* (*ThreadWorker)(void*);
 
 // Default
-ThreadWorker thread_worker(void* arg);
+// ThreadWorker thread_worker(void* arg);
 
 Thread* _Thread();
 void thread_destroy(Thread *thread);

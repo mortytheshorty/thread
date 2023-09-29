@@ -16,6 +16,7 @@ typedef struct ThreadPool {
 } ThreadPool;
 
 ThreadPool* _ThreadPool();
+void threadpool_destroy(ThreadPool *tp);
 void threadpool_extend(ThreadPool *tp, Thread *thread);
 void threadpool_append(ThreadPool *tp, Task *task);
 
