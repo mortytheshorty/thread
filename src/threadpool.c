@@ -47,6 +47,7 @@ void threadpool_destroy(ThreadPool *tp)
         free(tp->threads[i]);
     }
 
+    taskqueue_destroy(tp->queue);
     free(tp->threads);
     free(tp);
 }
