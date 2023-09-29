@@ -28,6 +28,7 @@ typedef struct execution {
 typedef struct Task {
     execution_t exec;
     Thread *master;
+    _Atomic int id;
     _Atomic const char *name;
     TaskStatus status;
     struct Task *prev;

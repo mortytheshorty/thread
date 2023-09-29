@@ -24,8 +24,8 @@ int main(void)
     Task *task = _Task(func, "Task: 1");
     Task *task2 = _Task(func, "Task: 2");
 
-    task->name = "Task 1";
-    task2->name = "Task 2";
+    task->name = (_Atomic const char *) "Task 1";
+    task2->name = (_Atomic const char *) "Task 2";
 
     if (!task) {
         error("task null\n");
@@ -53,8 +53,8 @@ int main(void)
 
     task_resume(task);
 
-    printf("ThreadPool->running: %d\n", tp->n_running);
-    printf("ThreadPool->idle: %d\n", tp->n_threads - tp->n_running);
+    printf("ThreadPool->running: %ld\n", tp->n_running);
+    printf("ThreadPool->idle: %ld\n", tp->n_threads - tp->n_running);
 
     sleep(10);
 

@@ -39,7 +39,7 @@ extern const char* thread_strerror(int err);
 void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
 {
     FILE *fp = g_thread_log == NULL ? stdout : g_thread_log;
-    const char name[16] = { 0 };
+    char name[16] = { 0 };
     pthread_getname_np(threadid, name, sizeof name);
 
     pthread_mutex_lock(&debug_lock);
@@ -59,7 +59,7 @@ void xdebug(pthread_t threadid, const char *function, const char *fmt, ...)
 void xerror(pthread_t threadid, const char *function, const char *filename, int line, const char *fmt, ...)
 {
     FILE *fp = g_thread_log == NULL ? stderr : g_thread_log;
-    const char name[16] = { 0 };
+    char name[16] = { 0 };
     pthread_getname_np(threadid, name, sizeof name);
 
     pthread_mutex_lock(&debug_lock);

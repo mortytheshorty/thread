@@ -4,7 +4,7 @@
 #include <private.h>
 #include <thread_debug.h>
 
-static int task_id = 0;
+_Atomic static int task_id = 0;
 
 Task *_Task(void* (*function)(void*), void *arg)
 {
@@ -12,10 +12,12 @@ Task *_Task(void* (*function)(void*), void *arg)
     if (task == NULL) {
         return NULL;
     }
+
     task->exec.function = function;
     task->exec.argument = arg;
     task->status = TaskCreated;
-
+    task->id = task_id++;
+    
     return task;
 }
 

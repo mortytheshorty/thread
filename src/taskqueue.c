@@ -24,7 +24,7 @@ void insertAfter(taskqueue_t *queue, Task *fromTask, Task *newTask)
     newTask->prev = fromTask;
     if (fromTask->next == NULL) {
         newTask->next = NULL;
-        queue->end = newTask;
+        queue->end = (_Atomic Task*) newTask;
     }
     else {
         newTask->next = fromTask->next;
@@ -39,7 +39,7 @@ void insertBefore(taskqueue_t *queue, Task *fromTask, Task *newTask)
     newTask->next = fromTask;
     if (fromTask->prev == NULL) {
         newTask->prev = NULL;
-        queue->begin = newTask;
+        queue->begin =(_Atomic Task*) newTask;
     }
     else {
         newTask->prev = fromTask->prev;
@@ -52,13 +52,13 @@ void insertBefore(taskqueue_t *queue, Task *fromTask, Task *newTask)
 void taskqueue_append(taskqueue_t *queue, Task *task)
 {
     if (queue->begin == NULL) {
-        queue->begin = task;
-        queue->end = task;
+        queue->begin = (_Atomic Task*) task;
+        queue->end = (_Atomic Task*) task;
         task->prev = NULL;
         task->next = NULL;
     }
     else {
-        insertBefore(queue, queue->begin, task);
+        insertBefore(queue, (Task*) queue->begin, task);
     }
 
     queue->count++;
@@ -70,7 +70,7 @@ void taskqueue_append_last(taskqueue_t *queue, Task *task)
         taskqueue_append(queue, task);
     }
     else {
-        insertAfter(queue, queue->end, task);
+        insertAfter(queue, (Task*) queue->end, task);
     }
 
     queue->count++;
@@ -79,14 +79,14 @@ void taskqueue_append_last(taskqueue_t *queue, Task *task)
 Task* taskqueue_remove(taskqueue_t *queue, Task *task)
 {
     if (task->prev == NULL) {
-        queue->begin = task->next;
+        queue->begin = (_Atomic Task*) task->next;
     }
     else {
         task->prev->next = task->next;
     }
 
     if (task->next == NULL) {
-        queue->end = task->prev;
+        queue->end = (_Atomic Task*) task->prev;
     }
     else {
         task->next->prev = task->prev;
